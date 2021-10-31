@@ -55,7 +55,7 @@ class ProfileMenu extends StatelessWidget {
                   UserPreferences().removeUser();
                   Provider.of<UserProvider>(context, listen: false)
                       .setUser(User());
-                  Navigator.push(context, Slide(page: AuthScreen()));
+                  Navigator.pushReplacement(context, Slide(page: AuthScreen()));
                 },
               ),
             ],

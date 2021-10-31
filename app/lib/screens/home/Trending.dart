@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:app/config/WidgetSpace.dart';
 import 'package:app/models/Article.dart';
+import 'package:app/utilWidgets/PageSlide.dart';
 import 'package:app/widgets/BrandLoader.dart';
+import 'package:app/widgets/OverNewsReader.dart';
 import 'package:app/widgets/PageHeader.dart';
 import 'package:app/models/Response.dart';
 import 'package:flutter/material.dart';
@@ -46,12 +48,21 @@ class _TrendingPageState extends State<TrendingPage>
     super.dispose();
   }
 
-  Widget TrendingList(List<Article> articles) {
+  Widget TrendingList(List<Article> articles, double screenHeight) {
     return SliverList(
       delegate: SliverChildBuilderDelegate((BuildContext context, int idx) {
         Article currentArticle = articles[idx];
 
         return ListTile(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  Slide(
+                      page: OverlayNewsReader(
+                    articles: articles,
+                    toPosition: idx * screenHeight,
+                  )));
+            },
             minLeadingWidth: 100,
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             title: Padding(
@@ -92,6 +103,8 @@ class _TrendingPageState extends State<TrendingPage>
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Scrollbar(
         child: CustomScrollView(
@@ -140,7 +153,7 @@ class _TrendingPageState extends State<TrendingPage>
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   final List<Article> articles = snapshot.data.data;
-                  return TrendingList(articles);
+                  return TrendingList(articles, screenHeight);
                 } else if (snapshot.hasError) {
                   return SliverToBoxAdapter(
                       child: Center(child: Text('${snapshot.error}')));

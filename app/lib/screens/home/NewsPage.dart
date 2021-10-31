@@ -51,6 +51,7 @@ class _NewsPageState extends State<NewsPage> {
               final int dataLength = snapshot.data.data.length;
               return ScrollSnapList(
                 scrollDirection: Axis.vertical,
+                padding: EdgeInsets.all(0),
                 itemBuilder: (BuildContext ctx, int idx) {
                   return FullScreenNewsView(article: articles[idx]);
                 },

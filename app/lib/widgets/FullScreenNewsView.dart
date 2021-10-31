@@ -1,11 +1,15 @@
 import 'package:app/config/WidgetSpace.dart';
 import 'package:app/models/Article.dart';
+import 'package:app/widgets/CommetModal.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 
 class FullScreenNewsView extends StatefulWidget {
   final Article article;
-  const FullScreenNewsView({Key? key, required this.article}) : super(key: key);
+  final bool fullHeight;
+  const FullScreenNewsView(
+      {Key? key, required this.article, this.fullHeight = false})
+      : super(key: key);
 
   @override
   _FullScreenNewsViewState createState() => _FullScreenNewsViewState();
@@ -23,13 +27,15 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
     return Container(
-      height: screenHeight - (appbarheight + bottomnavHeight),
+      height: screenHeight -
+          (widget.fullHeight ? 0 : (appbarheight + bottomnavHeight)),
       padding: EdgeInsets.all(15),
       child: Column(
         children: [
           Container(
             clipBehavior: Clip.antiAlias,
             width: screenWidth,
+            margin: EdgeInsets.only(top: widget.fullHeight ? 20 : 0),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -129,7 +135,15 @@ Widget ActionPanel(Article article, BuildContext ctx,
         ),
         Column(
           children: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.comment)),
+            IconButton(
+                onPressed: () {
+                  showModalBottomSheet<void>(
+                      isScrollControlled: true,
+                      builder: (BuildContext ctx) =>
+                          CommentModal(postId: article.id),
+                      context: ctx);
+                },
+                icon: Icon(Icons.comment)),
             Text("Comment")
           ],
         ),
