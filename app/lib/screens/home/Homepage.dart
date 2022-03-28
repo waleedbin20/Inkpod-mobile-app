@@ -61,24 +61,26 @@ class _HomePageState extends State<HomePage> {
   Widget buildBottomNav(context) {
     return Container(
       height: 60,
-      child: BottomNavigationBar(
-        iconSize: 24,
-        selectedFontSize: 12,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        currentIndex: _navindex,
-        unselectedItemColor: Colors.grey[400],
-        selectedItemColor: Theme.of(context).primaryColor,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed,
-        items:
-            List.generate(navBarItems.length, (idx) => getBottomNavItem(idx)),
-        onTap: (idx) => setState(() {
-          _navindex = idx;
-          pageController.animateToPage(idx,
-              duration: Duration(milliseconds: 250), curve: Curves.easeOut);
-        }),
+      child: SingleChildScrollView(
+        child: BottomNavigationBar(
+          iconSize: 24,
+          selectedFontSize: 12,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          currentIndex: _navindex,
+          unselectedItemColor: Colors.grey[400],
+          selectedItemColor: Theme.of(context).primaryColor,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          type: BottomNavigationBarType.fixed,
+          items:
+              List.generate(navBarItems.length, (idx) => getBottomNavItem(idx)),
+          onTap: (idx) => setState(() {
+            _navindex = idx;
+            pageController.animateToPage(idx,
+                duration: Duration(milliseconds: 250), curve: Curves.easeOut);
+          }),
+        ),
       ),
     );
   }
