@@ -36,7 +36,8 @@ getBottomNavItem(int idx) {
 
   return BottomNavigationBarItem(
     icon: Padding(
-        padding: EdgeInsets.all(4), child: Icon(iconMap[navItem['tag']])),
+        padding: EdgeInsets.symmetric(vertical: 0),
+        child: Icon(iconMap[navItem['tag']], size: 35)),
     label: navItem['label'].toString(),
   );
 }

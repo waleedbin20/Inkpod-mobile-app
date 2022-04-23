@@ -31,9 +31,9 @@ class _HomePageState extends State<HomePage> {
         // mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 5.0),
+            padding: const EdgeInsets.only(top: 10.0),
             child: Image(
-              width: 85,
+              width: 150,
               image: AssetImage('assets/logo.png'),
             ),
           ),

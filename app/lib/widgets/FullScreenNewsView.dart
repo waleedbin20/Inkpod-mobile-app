@@ -28,14 +28,14 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
     final double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       height: screenHeight -
-          (widget.fullHeight ? 0 : (appbarheight + bottomnavHeight)),
+          (widget.fullHeight ? 10 : (appbarheight + bottomnavHeight)),
       padding: EdgeInsets.all(15),
       child: Column(
         children: [
           Container(
             clipBehavior: Clip.antiAlias,
             width: screenWidth,
-            margin: EdgeInsets.only(top: widget.fullHeight ? 20 : 0),
+            margin: EdgeInsets.only(top: widget.fullHeight ? 20 : 30),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -59,7 +59,7 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
               ),
             ),
           ),
-          SizedBox(height: 15),
+          SizedBox(height: 30),
           Flexible(
               flex: 3,
               child: Container(
@@ -71,7 +71,7 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
                       TextStyle(fontSize: 24, height: 1.2, letterSpacing: -0.2),
                 ),
               )),
-          SizedBox(height: 15),
+          SizedBox(height: 20),
           Expanded(
               flex: 3,
               child: Scrollbar(
@@ -91,7 +91,7 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
               )
             ],
           ),
-          SizedBox(height: 5),
+          SizedBox(height: 20),
           ActionPanel(widget.article, context,
               toggleLike: likePost,
               toggleDislike: dislikePost,
