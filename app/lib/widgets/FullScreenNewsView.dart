@@ -73,7 +73,7 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
               )),
           SizedBox(height: 20),
           Expanded(
-              flex: 4,
+              flex: 5,
               child: Scrollbar(
                 child: SingleChildScrollView(
                     child: Text(

@@ -43,6 +43,7 @@ class Article {
         topic: json['topic'],
         owner: Owner.fromJson(json['owner']));
   }
+  
 
   static List<Article> fromApi(List<dynamic> resArr) {
     return resArr.map((article) => Article.fromJson(article)).toList();
