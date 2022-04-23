@@ -35,7 +35,7 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
           Container(
             clipBehavior: Clip.antiAlias,
             width: screenWidth,
-            margin: EdgeInsets.only(top: widget.fullHeight ? 20 : 30),
+            margin: EdgeInsets.only(top: widget.fullHeight ? 20 : 20),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -59,7 +59,7 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
               ),
             ),
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 20),
           Flexible(
               flex: 3,
               child: Container(
@@ -73,7 +73,7 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
               )),
           SizedBox(height: 20),
           Expanded(
-              flex: 3,
+              flex: 4,
               child: Scrollbar(
                 child: SingleChildScrollView(
                     child: Text(
@@ -81,7 +81,7 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
                   style: TextStyle(fontSize: 16),
                 )),
               )),
-          SizedBox(height: 5),
+          SizedBox(height: 3),
           Row(
             children: [
               Text("Courtesy of"),

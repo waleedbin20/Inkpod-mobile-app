@@ -23,6 +23,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   PreferredSizeWidget buildAppBar() {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    //final double screenWidth = MediaQuery.of(context).size.width;
     return AppBar(
       elevation: 0,
       backgroundColor: Colors.white,
@@ -33,7 +35,7 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
             child: Image(
-              width: 150,
+              width: screenHeight * 1 / 6,
               image: AssetImage('assets/logo.png'),
             ),
           ),
