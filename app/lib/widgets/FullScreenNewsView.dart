@@ -1,7 +1,12 @@
 import 'package:app/config/WidgetSpace.dart';
+import 'package:app/data/storage/PersistantStorage.dart';
 import 'package:app/models/Article.dart';
+import 'package:app/models/Response.dart';
+import 'package:app/models/User.dart';
+import 'package:app/screens/home/NewsPage.dart';
 import 'package:app/widgets/CommetModal.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:share/share.dart';
 
 class FullScreenNewsView extends StatefulWidget {
@@ -117,7 +122,10 @@ Widget ActionPanel(Article article, BuildContext ctx,
         Column(
           children: [
             IconButton(
-                onPressed: () => toggleLike(),
+                onPressed: () {
+                  toggleLike();
+                  //updateLikes(evenType: article, articleId: article.id);
+                },
                 icon: Icon(
                     isLiked ? Icons.thumb_up : Icons.thumb_up_alt_outlined)),
             Text((isLiked ? likes + 1 : likes).toString())
@@ -126,7 +134,10 @@ Widget ActionPanel(Article article, BuildContext ctx,
         Column(
           children: [
             IconButton(
-                onPressed: () => toggleDislike(),
+                onPressed: () {
+                  toggleDislike();
+                  updateLikes(articleId: article.id, evenType: '');
+                },
                 icon: Icon(isDisliked
                     ? Icons.thumb_down
                     : Icons.thumb_down_alt_outlined)),
@@ -163,4 +174,26 @@ Widget ActionPanel(Article article, BuildContext ctx,
 onShareArticle(BuildContext ctx, String id) async {
   await Share.share("https://www.inkpod.org/news/$id");
   return;
+}
+
+Future<Response> updateLikes(
+    {required String evenType, userId, articleId}) async {
+  // if (even == "")
+  //   return Response(success: false, message: "Image is required");
+
+  Future<User> getUserData() => UserPreferences().getUser();
+
+  userId = (await getUserData()).id;
+
+  var request = http.MultipartRequest(
+      'PUT', Uri.parse("https://api.inkpod.org/v0/article"))
+    ..fields['id'] = articleId
+    ..fields['likes'] = evenType
+    ..fields['userId'] = userId;
+
+  var addArticleRes = await request.send();
+  if (addArticleRes.statusCode == 200)
+    return Response(success: true, message: "Upated Like");
+  else
+    return Response(success: false, message: "Could not upload article");
 }

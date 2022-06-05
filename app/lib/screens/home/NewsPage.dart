@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:app/config/WidgetSpace.dart';
+import 'package:app/data/storage/PersistantStorage.dart';
 import 'package:app/models/Article.dart';
 import 'package:app/models/Response.dart';
+import 'package:app/models/User.dart';
 import 'package:app/widgets/BrandLoader.dart';
 import 'package:app/widgets/FullScreenNewsView.dart';
 import 'package:flutter/material.dart';
@@ -66,4 +68,25 @@ class _NewsPageState extends State<NewsPage> {
           },
         ));
   }
+}
+
+Future<Response> updateLikes({evenType, userId, articleId}) async {
+  // if (even == "")
+  //   return Response(success: false, message: "Image is required");
+
+  Future<User> getUserData() => UserPreferences().getUser();
+
+  userId = (await getUserData()).id;
+
+  var request = http.MultipartRequest(
+      'POST', Uri.parse("https://api.inkpod.org/v0/article"))
+    ..fields['id'] = articleId
+    ..fields['likes'] = evenType
+    ..fields['userId'] = userId;
+
+  var addArticleRes = await request.send();
+  if (addArticleRes.statusCode == 200)
+    return Response(success: true, message: "Upated Like");
+  else
+    return Response(success: false, message: "Could not upload article");
 }
