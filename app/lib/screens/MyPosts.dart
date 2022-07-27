@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app/config/WidgetSpace.dart';
+import 'package:app/config/constant.dart';
 import 'package:app/data/storage/PersistantStorage.dart';
 import 'package:app/models/Article.dart';
 import 'package:app/models/User.dart';
@@ -29,7 +30,7 @@ class _MyPostsState extends State<MyPosts> with SingleTickerProviderStateMixin {
     String id = (await getUserData()).id;
 
     final response = await http
-        .get(Uri.parse('https://api.inkpod.org/v0/user/articles?userId=${id}'));
+        .get(Uri.parse('${Constants.baseUrl}/v0/user/articles?userId=${id}'));
 
     if (response.statusCode == 200) {
       final parsedRes = Article.fromApi(jsonDecode(response.body)['articles']);

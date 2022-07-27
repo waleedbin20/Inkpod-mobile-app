@@ -19,6 +19,7 @@ class Comment {
   }
 
   static List<Comment> fromApi(List<dynamic> jsonComments) {
-    return jsonComments.map((comment) => Comment.fromJson(comment)).toList();
+    // return jsonComments.map((comment) => Comment.fromJson(comment)).toList();
+    return [];
   }
 }

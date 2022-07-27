@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:app/config/WidgetSpace.dart';
+import 'package:app/config/constant.dart';
 import 'package:app/data/storage/PersistantStorage.dart';
 import 'package:app/models/Article.dart';
 import 'package:app/models/Response.dart';
@@ -24,8 +27,38 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
   bool isLiked = false;
   bool isDisliked = false;
 
-  likePost() => setState(() => isLiked = !isLiked);
-  dislikePost() => setState(() => isDisliked = !isDisliked);
+  String? userId;
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UserPreferences().getUser().then((value) {
+        setState(() {
+          userId = value.id;
+          if (userId != null && widget.article.likes != null) {
+            isLiked = widget.article.likes.contains(userId);
+          }
+          if (userId != null && widget.article.dislikes != null) {
+            isDisliked = widget.article.dislikes.contains(userId);
+          }
+        });
+      });
+    });
+  }
+
+  likePost() => setState(() {
+        isLiked = !isLiked;
+        if (isLiked) {
+          isDisliked = false;
+        }
+      });
+  dislikePost() => setState(() {
+        isDisliked = !isDisliked;
+        if (isDisliked) {
+          isLiked = false;
+        }
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +134,8 @@ class _FullScreenNewsViewState extends State<FullScreenNewsView> {
               toggleLike: likePost,
               toggleDislike: dislikePost,
               isLiked: isLiked,
-              isDisliked: isDisliked),
+              isDisliked: isDisliked,
+              userId: userId ?? ""),
         ],
       ),
     );
@@ -112,7 +146,8 @@ Widget ActionPanel(Article article, BuildContext ctx,
     {required Function toggleLike,
     required Function toggleDislike,
     required bool isLiked,
-    required bool isDisliked}) {
+    required bool isDisliked,
+    required String userId}) {
   final likes = article.likes.length;
 
   return Container(
@@ -122,9 +157,10 @@ Widget ActionPanel(Article article, BuildContext ctx,
         Column(
           children: [
             IconButton(
-                onPressed: () {
+                onPressed: () async {
                   toggleLike();
-                  //updateLikes(evenType: article, articleId: article.id);
+                  await updateLikes(
+                      evenType: 'like', userId: userId, articleId: article.id);
                 },
                 icon: Icon(
                     isLiked ? Icons.thumb_up : Icons.thumb_up_alt_outlined)),
@@ -136,7 +172,10 @@ Widget ActionPanel(Article article, BuildContext ctx,
             IconButton(
                 onPressed: () {
                   toggleDislike();
-                  updateLikes(articleId: article.id, evenType: '');
+                  updateLikes(
+                      articleId: article.id,
+                      userId: userId,
+                      evenType: 'dislike');
                 },
                 icon: Icon(isDisliked
                     ? Icons.thumb_down
@@ -149,10 +188,11 @@ Widget ActionPanel(Article article, BuildContext ctx,
             IconButton(
                 onPressed: () {
                   showModalBottomSheet<void>(
-                      isScrollControlled: true,
-                      builder: (BuildContext ctx) =>
-                          CommentModal(postId: article.id),
-                      context: ctx);
+                    isScrollControlled: true,
+                    builder: (BuildContext ctx) =>
+                        CommentModal(postId: article.id),
+                    context: ctx,
+                  );
                 },
                 icon: Icon(Icons.comment)),
             Text("Comment")
@@ -181,18 +221,25 @@ Future<Response> updateLikes(
   // if (even == "")
   //   return Response(success: false, message: "Image is required");
 
-  Future<User> getUserData() => UserPreferences().getUser();
+  final user = await UserPreferences().getUser();
 
-  userId = (await getUserData()).id;
+  userId = user.id;
 
-  var request = http.MultipartRequest(
-      'PUT', Uri.parse("https://api.inkpod.org/v0/article"))
-    ..fields['id'] = articleId
-    ..fields['likes'] = evenType
-    ..fields['userId'] = userId;
+  var response =
+      await http.put(Uri.tryParse(Constants.baseUrl + "/v0/article")!, body: {
+    "eventType": evenType,
+    "userId": userId,
+    "articleId": articleId,
+  });
 
-  var addArticleRes = await request.send();
-  if (addArticleRes.statusCode == 200)
+  // var request =
+  //     http.MultipartRequest('PUT', Uri.parse("${Constants.baseUrl}/v0/article"))
+  //       ..fields['id'] = articleId
+  //       ..fields['likes'] = evenType
+  //       ..fields['userId'] = userId;
+
+  var addArticleRes = response.body;
+  if (response.statusCode == 200)
     return Response(success: true, message: "Upated Like");
   else
     return Response(success: false, message: "Could not upload article");

@@ -1,8 +1,6 @@
 import 'package:app/models/Comment.dart';
 import 'package:app/models/Owner.dart';
 
-
-
 class Article {
   final String id;
   final String title;
@@ -43,7 +41,6 @@ class Article {
         topic: json['topic'],
         owner: Owner.fromJson(json['owner']));
   }
-  
 
   static List<Article> fromApi(List<dynamic> resArr) {
     return resArr.map((article) => Article.fromJson(article)).toList();

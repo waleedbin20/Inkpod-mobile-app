@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app/config/WidgetSpace.dart';
+import 'package:app/config/constant.dart';
 import 'package:app/models/Article.dart';
 import 'package:app/utilWidgets/PageSlide.dart';
 import 'package:app/widgets/BrandLoader.dart';
@@ -25,7 +26,7 @@ class _TrendingPageState extends State<TrendingPage>
 
   Future<Response> fetchArticles() async {
     final response =
-        await http.get(Uri.parse('https://api.inkpod.org/v0/article'));
+        await http.get(Uri.parse('${Constants.baseUrl}/v0/article'));
 
     if (response.statusCode == 200) {
       final parsedRes = Article.fromApi(jsonDecode(response.body)['articles']);
