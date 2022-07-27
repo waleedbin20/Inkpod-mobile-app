@@ -1,9 +1,14 @@
+import 'dart:developer';
+
 import 'package:app/config/WidgetSpace.dart';
+import 'package:app/config/constant.dart';
+import 'package:app/data/storage/PersistantStorage.dart';
 import 'package:app/widgets/CustomTextField.dart';
 import 'package:app/widgets/EmptyMessage.dart';
 import 'package:app/widgets/PageHeader.dart';
 import 'package:app/widgets/SmallButton.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class CommentModal extends StatefulWidget {
   final postId;
@@ -13,20 +18,68 @@ class CommentModal extends StatefulWidget {
   _CommentModalState createState() => _CommentModalState();
 }
 
-Widget CommentArea() => Expanded(
-        child: Scrollbar(
-            child: CustomScrollView(
-      slivers: [
-        EmptyMessage(
-          message: "No comments yet",
-        )
-      ],
-    )));
+Widget _commentArea() => Expanded(
+      child: Scrollbar(
+        child: CustomScrollView(
+          slivers: [
+            EmptyMessage(
+              message: "No comments yet",
+            )
+          ],
+        ),
+      ),
+    );
 
 class _CommentModalState extends State<CommentModal> {
   TextEditingController commentController = new TextEditingController();
 
-  Widget CommentHeader(context) => InkWell(
+  String? userId;
+  late ValueNotifier<bool> isLoading;
+  @override
+  void initState() {
+    isLoading = ValueNotifier(false);
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UserPreferences().getUser().then((value) {
+        setState(() {
+          userId = value.id;
+        });
+      });
+    });
+  }
+
+  Future<void> addComment() async {
+    try {
+      isLoading.value = true;
+      var url = "${Constants.baseUrl}/v0/comment";
+      var body = {
+        "articleId": widget.postId,
+        "userId": "$userId",
+        "comment": commentController.text
+      };
+      var response = await http.post(Uri.parse(url), body: body);
+      if (response.statusCode == 200) {
+        setState(() {
+          commentController.text = "";
+        });
+        log("Comment added successfully");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Comment added successfully"),
+          ),
+        );
+      } else {
+        log("Error adding comment", error: response.body);
+      }
+    } catch (e) {
+      log("Error adding comment", error: e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Widget _commentHeader(context) => InkWell(
         onTap: () => Navigator.pop(context),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -34,19 +87,30 @@ class _CommentModalState extends State<CommentModal> {
         ),
       );
 
-  Widget CommentInput(textFieldWidth) => Row(
+  Widget _commentInput(textFieldWidth) => Row(
         children: [
           Container(
             width: textFieldWidth,
             child: CustomTextField(
-                textController: commentController,
-                inputHint: "Write a comment..."),
+              textController: commentController,
+              inputHint: "Write a comment...",
+            ),
           ),
-          SquareIconButton(
-              icon: Icons.send,
-              onClick: () {
-                print(commentController.text);
-              })
+          ValueListenableBuilder<bool>(
+            valueListenable: isLoading,
+            builder: (BuildContext context, bool value, Widget? child) {
+              if (value) {
+                return Center(child: CircularProgressIndicator.adaptive());
+              }
+              return SquareIconButton(
+                icon: Icons.send,
+                onClick: () {
+                  print(commentController.text);
+                  addComment();
+                },
+              );
+            },
+          ),
         ],
       );
 
@@ -67,9 +131,9 @@ class _CommentModalState extends State<CommentModal> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CommentHeader(context),
-          CommentArea(),
-          CommentInput(screenWidth * 0.8)
+          _commentHeader(context),
+          _commentArea(),
+          _commentInput(screenWidth * 0.8)
         ],
       ),
     );

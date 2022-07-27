@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:app/config/constant.dart';
 import 'package:app/data/storage/PersistantStorage.dart';
 import 'package:app/models/Response.dart';
 import 'package:app/models/User.dart';
@@ -43,7 +43,7 @@ class AuthProvider with ChangeNotifier {
     };
 
     http.Response loginRes = await http.post(
-      Uri.parse("https://api.inkpod.org/v0/auth/login"),
+      Uri.parse("${Constants.baseUrl}/v0/auth/login"),
       body: json.encode(loginData),
       headers: {'Content-Type': 'application/json'},
     );
@@ -91,7 +91,7 @@ class AuthProvider with ChangeNotifier {
     };
 
     http.Response registerRes = await http.post(
-      Uri.parse("https://api.inkpod.org/v0/auth/register"),
+      Uri.parse("${Constants.baseUrl}/v0/auth/register"),
       body: json.encode(loginData),
       headers: {'Content-Type': 'application/json'},
     );

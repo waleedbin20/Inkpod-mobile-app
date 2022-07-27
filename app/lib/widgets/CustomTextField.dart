@@ -6,13 +6,15 @@ class CustomTextField extends StatefulWidget {
   final String inputHint;
   final bool isMultiline;
   final bool shoulObscureText;
-  const CustomTextField(
-      {Key? key,
-      required this.textController,
-      required this.inputHint,
-      this.isMultiline = false,
-      this.shoulObscureText = false})
-      : super(key: key);
+  final ValueChanged<String>? onChanged;
+  const CustomTextField({
+    Key? key,
+    required this.textController,
+    this.onChanged,
+    required this.inputHint,
+    this.isMultiline = false,
+    this.shoulObscureText = false,
+  }) : super(key: key);
 
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
@@ -55,6 +57,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         obscureText: !widget.isMultiline && widget.shoulObscureText,
         focusNode: _focus,
         autofocus: false,
+        onChanged: widget.onChanged,
         decoration: InputDecoration(
           hintText: widget.inputHint,
           fillColor: Colors.grey[100],

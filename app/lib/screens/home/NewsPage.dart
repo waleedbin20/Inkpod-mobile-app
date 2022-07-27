@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app/config/WidgetSpace.dart';
+import 'package:app/config/constant.dart';
 import 'package:app/data/storage/PersistantStorage.dart';
 import 'package:app/models/Article.dart';
 import 'package:app/models/Response.dart';
@@ -29,7 +30,7 @@ class _NewsPageState extends State<NewsPage> {
 
   Future<Response> fetchArticles() async {
     final response =
-        await http.get(Uri.parse('https://api.inkpod.org/v0/article'));
+        await http.get(Uri.parse('${Constants.baseUrl}/v0/article'));
 
     if (response.statusCode == 200) {
       final parsedRes = Article.fromApi(jsonDecode(response.body)['articles']);
@@ -79,7 +80,7 @@ Future<Response> updateLikes({evenType, userId, articleId}) async {
   userId = (await getUserData()).id;
 
   var request = http.MultipartRequest(
-      'POST', Uri.parse("https://api.inkpod.org/v0/article"))
+      'POST', Uri.parse("${Constants.baseUrl}/v0/article"))
     ..fields['id'] = articleId
     ..fields['likes'] = evenType
     ..fields['userId'] = userId;

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app/config/WidgetSpace.dart';
+import 'package:app/config/constant.dart';
 import 'package:app/data/storage/PersistantStorage.dart';
 import 'package:app/models/Response.dart';
 import 'package:app/models/User.dart';
@@ -68,7 +69,7 @@ class _AddArticleState extends State<AddArticle> {
 
   Future<List<Topic>> getCategories() async {
     http.Response topicsRes =
-        await http.get(Uri.parse("https://api.inkpod.org/v0/topics"));
+        await http.get(Uri.parse("${Constants.baseUrl}/v0/topics"));
     if (topicsRes.statusCode == 200) {
       final topics = List.from(jsonDecode(topicsRes.body)['topics']);
       return List.from(topics.map((topic) => Topic.fromJson(topic)));
@@ -223,7 +224,7 @@ Future<Response> uploadArticle({title, body, imagePath, category}) async {
   String id = (await getUserData()).id;
 
   var request = http.MultipartRequest(
-      'POST', Uri.parse("https://api.inkpod.org/v0/article"))
+      'POST', Uri.parse("${Constants.baseUrl}/v0/article"))
     ..fields['title'] = title
     ..fields['body'] = body
     ..fields['category'] = category
