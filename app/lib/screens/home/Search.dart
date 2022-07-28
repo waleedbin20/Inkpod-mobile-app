@@ -11,6 +11,7 @@ import 'package:app/widgets/SmallButton.dart';
 import 'package:app/widgets/TapAwayWrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -128,23 +129,26 @@ class _SearchPageState extends State<SearchPage> {
                                   Radius.circular(borderRadius / 2)),
                             ),
                             child: FittedBox(
-                              fit: BoxFit.fill,
-                              child: FadeInImage.assetNetwork(
-                                placeholder: 'assets/placeholder_image.png',
-                                image: currentTopic.imageUrl,
-                                // height: 250,
-                                // width: 120,
-                                fit: BoxFit.contain,
-                                fadeOutDuration: Duration(milliseconds: 125),
-                                fadeInDuration: Duration(milliseconds: 125),
-                              ),
-                            ),
+                                fit: BoxFit.fill,
+                                child: Image.asset('assets/empty.png')
+
+                                // FadeInImage.assetNetwork(
+                                //   placeholder: 'assets/placeholder_image.png',
+                                //   image: "",
+                                //   // height: 250,
+                                //   // width: 120,
+                                //   fit: BoxFit.contain,
+                                //   fadeOutDuration: Duration(milliseconds: 125),
+                                //   fadeInDuration: Duration(milliseconds: 125),
+                                // ),
+                                ),
                           ),
                           Container(
                               padding: EdgeInsets.all(10),
                               alignment: Alignment.bottomCenter,
                               child: Text(
-                                currentTopic.value,
+                                toBeginningOfSentenceCase(currentTopic.value) ??
+                                    '',
                               )),
                         ],
                       );
